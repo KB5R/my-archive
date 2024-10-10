@@ -1,8 +1,3 @@
-# This timer unit is for testing
-# By David Both
-# Licensed under GPL V2
-#
-
 [Unit]
 Description=Logs some system statistics to the systemd journal
 Requires=myMonitor.service

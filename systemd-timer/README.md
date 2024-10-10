@@ -1,5 +1,5 @@
 ### Планировка
-#### Поместить myMonitor.service и myMonitor.timer в дерикторию /etc/systemd/system
+#### Поместить `myMonitor.service` и `myMonitor.timer` в дерикторию `/etc/systemd/system`
 
 ### Проверка сервиса 
 ```

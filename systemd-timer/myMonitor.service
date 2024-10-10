@@ -1,8 +1,3 @@
-# This service unit is for testing timer units
-# By David Both
-# Licensed under GPL V2
-
-
 [Unit]
 Description=script_test_timer
 Wants=myMonitor.timer

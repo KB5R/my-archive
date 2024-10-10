@@ -8,7 +8,7 @@ Wants=myMonitor.timer
 
 [Service]
 Type=oneshot
-ExecStart=/home/popkovmk/script.sh
+ExecStart=/home/user/script.sh
 
 [Install]
 WantedBy=multi-user.target

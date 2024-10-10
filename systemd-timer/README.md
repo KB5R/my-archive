@@ -30,5 +30,8 @@ WantedBy=timers.target
 
 ### Проверка сервиса 
 ```
+systemctl daemon-reload
+```
+```
 journalctl -S today -f -u myMonitor.service
 ```

@@ -184,7 +184,7 @@ sudo firewall-cmd --reload
 ### Важное
 ```
 firewall-cmd --zone=public --set-target=DROP --permanent
-firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="93.88.129.114" service name="ssh" accept' --permanent
+firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="IP" service name="ssh" accept' --permanent
 ```
 
   

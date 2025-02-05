@@ -181,6 +181,13 @@ sudo firewall-cmd --reload
   sudo systemctl disable firewalld
   ```
 
+```
+firewall-cmd --zone=public --set-target=DROP --permanent
+firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="93.88.129.114" service name="ssh" accept' --permanent
+```
+
+  
+
 **Внимание!** Отключайте firewalld только при наличии альтернативного брандмауэра.
 
 ## Дополнительные ресурсы

@@ -185,6 +185,7 @@ sudo firewall-cmd --reload
 ```
 firewall-cmd --zone=public --set-target=DROP --permanent
 firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="IP" service name="ssh" accept' --permanent
+firewall-cmd --zone=public --remove-service=http --permanent
 firewall-cmd --zone=public --remove-rich-rule='rule family="ipv4" source address="0.0.0.0/0" port port="80" protocol="tcp" reject' --permanent
 ```
 

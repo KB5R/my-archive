@@ -87,3 +87,40 @@ kubectl get pods -n dev
 NAME              READY   STATUS    RESTARTS   AGE
 app-kuber-dev-1   1/1     Running   0          16m
 ```
+
+### Работа с Replicaset and ReplicationController
+
+- ReplicationController
+```yaml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kuber-rc
+spec:
+  replicas: 3
+  selector:
+    app: kuber
+  template:
+    metadata:
+      name: kuber-app
+      labels:
+        app: kuber
+    spec:
+      containers:
+      - name: kuber-app-image
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+- Проверить RC
+```
+kubectl get rc
+```
+- Смотрим pods
+```
+kubectl get pods -l app=kuber
+NAME             READY   STATUS    RESTARTS   AGE
+kuber-rc-5lhr8   1/1     Running   0          10m
+kuber-rc-dq5qj   1/1     Running   0          10m
+kuber-rc-srg27   1/1     Running   0          10m
+```

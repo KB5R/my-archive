@@ -124,3 +124,14 @@ kuber-rc-5lhr8   1/1     Running   0          10m
 kuber-rc-dq5qj   1/1     Running   0          10m
 kuber-rc-srg27   1/1     Running   0          10m
 ```
+
+### Работа с Deployment
+- Создание deployment
+```
+kubectl create deployment kuber-ctl-app --image=nginx:latest --port=80 --replicas=3
+```
+```
+kubectl get deploy
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+kuber-ctl-app   3/3     3            3           43s
+```

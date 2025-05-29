@@ -296,3 +296,78 @@ kubectl rollout undo deployment/kuber --to-revision=8
 ```
 
 # LESSON10
+
+# Есть 3 основных service
+- ClusterIP
+- NodePort
+- LoadBalancer
+**Так же есть допы**
+- ExternalName
+
+**Как по мне самая удобная и понятная в реализации это nodeport**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber
+  labels:
+    app: kuber
+spec:
+  replicas: 3
+  minReadySeconds: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: http-server
+  template:
+    metadata:
+      labels:
+        app: http-server
+    spec:
+      containers:
+      - name: kuber-app
+        image: bokovets/kuber:v1.0
+        ports:
+        - containerPort: 8000
+```
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service-nodeport
+spec:
+ # externalTrafficPolicy: Local
+  # sessionAffinity: ClientIP -- Полезный папрмаер работает так когда бразуер потом k8s кэширует запрос service всегда будет отпровлятье его на один и тот же под
+  
+  selector:
+    app: http-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+      nodePort: 30080 # port-range: 30000-32767
+  type: NodePort
+
+```
+**Service в данном случае понимаю куда надо идти с помощью**
+```
+  selector:
+    app: http-server
+```
+**После создания service видим след*
+```
+kubectl get svc
+NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kuber-service-nodeport   NodePort    10.233.44.61   <none>        80:30080/TCP   11m
+```
+**В моей конфигурации ноды не имеют белых ip но если проверить ip и порт**
+```
+❯ curl 10.236.0.191:30080
+V1.0 - Hello world from hostname: kuber-cc68f9f49-898c9%
+```

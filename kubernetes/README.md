@@ -125,7 +125,7 @@ kuber-rc-dq5qj   1/1     Running   0          10m
 kuber-rc-srg27   1/1     Running   0          10m
 ```
 
-### Работа с Deployment
+### Работа с Deployment LESSON9
 - Создание deployment
 ```
 kubectl create deployment kuber-ctl-app --image=nginx:latest --port=80 --replicas=3
@@ -212,3 +212,87 @@ maxUnavailable: 1
 while true; do curl 192.168.49.2:32461; sleep 2; echo; done
 ```
 
+## Отличие Rolling Update от Recreate в Kubernetes
+
+### 1. Rolling Update (Постепенное обновление)
+**Как работает:**  
+- Новые поды создаются постепенно, а старые удаляются только после успешного запуска новых.  
+- Параллельно могут работать как старые, так и новые версии подов.  
+- Kubernetes контролирует количество доступных подов, чтобы не было простоев.  
+
+**Плюсы:**  
+- Без простоя (zero-downtime) — приложение остается доступным во время обновления.  
+- Плавное обновление — если что-то пойдет не так, можно откатиться.  
+
+**Минусы:**  
+- На время обновления могут одновременно работать две версии приложения, что может вызвать проблемы с совместимостью (например, если API изменилось).  
+- Обновление занимает больше времени, чем `Recreate`.  
+
+**Настройка в Deployment:**  
+```yaml
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1        # Сколько дополнительных подов можно создать
+    maxUnavailable: 0  # Сколько подов может быть недоступно во время обновления#
+```
+
+
+## 2. Recreate (Полное пересоздание)
+
+### Принцип работы
+- **Полное удаление** всех старых подов перед созданием новых
+- **Короткий простой (downtime)** - приложение недоступно между удалением старых и готовностью новых подов
+- **Атомарное обновление** - в любой момент времени работает только одна версия приложения
+
+### Преимущества
+✅ **Гарантированная согласованность** - исключены конфликты между разными версиями  
+✅ **Простота реализации** - не требует сложной логики балансировки  
+✅ **Быстрое завершение** - не тратится время на постепенное обновление  
+✅ **Предсказуемость** - полный контроль над процессом обновления  
+
+### Ограничения
+⚠️ **Время простоя** - сервис недоступен во время обновления  
+⚠️ **Нет плавного перехода** - возможны ошибки при высокой нагрузке после включения  
+⚠️ **Нет отката "на лету"** - для возврата нужно повторное развертывание  
+
+### Конфигурация Deployment
+```yaml
+spec:
+  strategy:
+    type: Recreate
+
+```
+
+### Проверка историй обновлений
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber
+  labels:
+    app: kuber
+  annotations: # Это необходимо для kubectl rollout history deployment/<deployment-name>
+    kubernetes.io/change-cause: "Deploy v2.0 with new response handlers"  # Для истории изменений
+spec:
+```
+
+- `kubectl rollout history deployment/kuber` - это история
+```yaml
+REVISION  CHANGE-CAUSE
+8         Deploy v4.0(test) with new response handlers
+9         Deploy v10.0(test) with new response handlers
+10        Deploy v10.0(nginx) with new response handlers
+```
+
+- Если надо срочно откатится назад после обновления
+```
+kubectl rollout undo deployment/kuber
+```
+- Откатится на опреденный апдейт 
+```
+kubectl rollout undo deployment/kuber --to-revision=8
+```
+
+# LESSON10
